@@ -7,25 +7,10 @@ interface RoundState {
   words: string[];
   active: boolean;
   typedText: string;
+  typedChars: number;
   timer: number;
   roundDuration: number;
-}
-
-interface UseRoundStore {
-  /* getters */
-  words: string[];
-  typedWords: string[];
-  currentTypedWord: string;
-  isActive: boolean;
-  isFinished: boolean;
-  timer: number;
-  roundDuration: number;
-
-  /* actions */
-  prepareRound(words?: string[]): void;
-  startRound(): void;
-  insertKey(key: string): void;
-  reset(): void;
+  startedAt: number | null; // timestamp
 }
 
 export const useRoundStore = defineStore('round', () => {
@@ -34,8 +19,10 @@ export const useRoundStore = defineStore('round', () => {
     words: defaultWords,
     active: false,
     typedText: '',
+    typedChars: 0,
     timer: 10,
     roundDuration: 10,
+    startedAt: null,
   });
 
   let intervalId: ReturnType<typeof setInterval> | null = null;
@@ -55,13 +42,9 @@ export const useRoundStore = defineStore('round', () => {
   }
 
   /* getters (computed) */
-  const words = computed(() => round.value.words);
   const typedWords = computed(() => round.value.typedText.split(/\s+/));
   const currentTypedWord = computed(() => typedWords.value[typedWords.value.length - 1] ?? '');
-  const timer = computed(() => round.value.timer);
-  const roundDuration = computed(() => round.value.roundDuration);
 
-  const isActive = computed(() => round.value.active);
   const isFinished = computed(() => round.value.timer <= 0);
 
   /* actions */
@@ -71,14 +54,17 @@ export const useRoundStore = defineStore('round', () => {
       words: newWords,
       active: false,
       typedText: '',
+      typedChars: 0,
       timer: 10,
       roundDuration: 10,
+      startedAt: null,
     };
   }
 
   function startRound() {
     if (round.value.active) return;
     round.value.active = true;
+    round.value.startedAt = Date.now();
     startTimer();
   }
 
@@ -89,8 +75,10 @@ export const useRoundStore = defineStore('round', () => {
 
     if (key === 'Backspace') {
       round.value.typedText = round.value.typedText.slice(0, -1);
+      round.value.typedChars--;
     } else {
       round.value.typedText += key;
+      round.value.typedChars++;
     }
   }
 
@@ -100,13 +88,10 @@ export const useRoundStore = defineStore('round', () => {
 
   return {
     /* getters */
-    words,
+    round,
     typedWords,
     currentTypedWord,
-    isActive,
     isFinished,
-    timer,
-    roundDuration,
 
     /* actions */
     prepareRound,

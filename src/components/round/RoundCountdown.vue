@@ -34,13 +34,13 @@ onBeforeUnmount(() => intervalId && clearInterval(intervalId));
 </script>
 
 <template>
-  <div class="relative flex h-30 w-30 items-center justify-center">
+  <div class="relative flex h-32 w-32 items-center justify-center">
     <div
       class="chart absolute inset-0 rounded-full"
       :class="{ running: active }"
       :style="{ '--duration': `${props.totalDuration}s` }"
     />
-    <div class="absolute inset-1 flex items-center justify-center rounded-full bg-amber-50">
+    <div class="absolute inset-2 flex items-center justify-center rounded-full bg-amber-50">
       <div class="z-10 text-7xl font-bold">{{ seconds }}</div>
     </div>
   </div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import RoundContainer from './components/RoundContainer.vue';
+import RoundContainer from '@/components/round/RoundContainer.vue';
 </script>
 
 <template>

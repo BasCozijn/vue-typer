@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, useTemplateRef } from 'vue';
 
-import RoundsWordsItem from './RoundsWordsItem.vue';
+import RoundWordsItem from './RoundWordsItem.vue';
 
 const props = defineProps<{
   words: string[];
@@ -39,7 +39,7 @@ watch(
           ref="wordsRef"
           :key="`word-${index}`"
         >
-          <RoundsWordsItem
+          <RoundWordsItem
             :word="word"
             :typedWord="typedWords[index]"
           />

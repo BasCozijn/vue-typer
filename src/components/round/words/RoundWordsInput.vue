@@ -26,6 +26,7 @@ const typedWordIsCorrect = computed(() => {
       class="border-none p-0 text-6xl outline-none focus:placeholder:text-transparent"
       :class="{
         'text-red-500': !typedWordIsCorrect,
+        'placeholder:text-transparent': disabled,
       }"
       type="text"
       placeholder="Start hier"
