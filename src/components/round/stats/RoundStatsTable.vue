@@ -7,7 +7,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="flex w-sm flex-col rounded bg-amber-100 p-3 shadow">
+  <div class="mx-auto flex w-full max-w-sm flex-col rounded bg-amber-100 p-3 shadow">
     <ul class="flex flex-col gap-2">
       <RoundStatsTableRow
         v-for="row in rows"

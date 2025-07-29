@@ -12,7 +12,7 @@ const isCorrect = computed(() => {
 </script>
 
 <template>
-  <div class="text-6xl">
+  <div class="text-4xl sm:text-6xl">
     <span
       v-for="char in word"
       :key="char"

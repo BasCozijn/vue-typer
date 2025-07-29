@@ -1,36 +1,27 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import validateKeyInput from '@/utils/validateKeyInput';
-import { words as defaultWords } from '@/data/words';
+import { useFetchWords } from '@/composables/useFetchWords';
 
-interface RoundState {
-  words: string[];
-  active: boolean;
-  typedText: string;
-  typedChars: number;
-  timer: number;
-  roundDuration: number;
-  startedAt: number | null; // timestamp
-}
+const defaultRound = {
+  words: [],
+  active: false,
+  typedText: '',
+  typedChars: 0,
+  timer: 0,
+  roundDuration: 10,
+  startedAt: null as number | null,
+};
 
 export const useRoundStore = defineStore('round', () => {
-  /* state (refs) */
-  const round = ref<RoundState>({
-    words: defaultWords,
-    active: false,
-    typedText: '',
-    typedChars: 0,
-    timer: 10,
-    roundDuration: 10,
-    startedAt: null,
-  });
+  const round = ref({ ...defaultRound });
 
   let intervalId: ReturnType<typeof setInterval> | null = null;
 
   function startTimer() {
     if (intervalId) return;
     intervalId = setInterval(() => {
-      if (--round.value.timer <= 0) {
+      if (++round.value.timer >= round.value.roundDuration) {
         clearTimer();
       }
     }, 1_000);
@@ -41,24 +32,17 @@ export const useRoundStore = defineStore('round', () => {
     intervalId = null;
   }
 
-  /* getters (computed) */
   const typedWords = computed(() => round.value.typedText.split(/\s+/));
   const currentTypedWord = computed(() => typedWords.value[typedWords.value.length - 1] ?? '');
 
-  const isFinished = computed(() => round.value.timer <= 0);
+  const isFinished = computed(() => round.value.timer >= round.value.roundDuration);
 
-  /* actions */
-  function prepareRound(newWords: string[] = defaultWords) {
+  async function reset() {
     clearTimer();
-    round.value = {
-      words: newWords,
-      active: false,
-      typedText: '',
-      typedChars: 0,
-      timer: 10,
-      roundDuration: 10,
-      startedAt: null,
-    };
+    round.value = { ...defaultRound };
+
+    const newWords = await useFetchWords();
+    round.value.words = newWords;
   }
 
   function startRound() {
@@ -82,21 +66,14 @@ export const useRoundStore = defineStore('round', () => {
     }
   }
 
-  function reset() {
-    prepareRound(round.value.words);
-  }
-
   return {
-    /* getters */
     round,
     typedWords,
     currentTypedWord,
     isFinished,
 
-    /* actions */
-    prepareRound,
+    reset,
     startRound,
     insertKey,
-    reset,
   };
 });

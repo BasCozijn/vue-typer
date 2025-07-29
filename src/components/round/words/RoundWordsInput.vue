@@ -16,14 +16,15 @@ const props = defineProps<{
 }>();
 
 const typedWordIsCorrect = computed(() => {
-  return props.word.includes(props.typedWord) ?? !props.typedWord.length;
+  return props.word?.includes(props.typedWord) ?? !props.typedWord.length;
 });
 </script>
 
 <template>
   <div>
     <input
-      class="border-none p-0 text-6xl outline-none focus:placeholder:text-transparent"
+      name="typed-word"
+      class="border-none p-0 text-4xl outline-none focus:placeholder:text-transparent sm:text-6xl"
       :class="{
         'text-red-500': !typedWordIsCorrect,
         'placeholder:text-transparent': disabled,

@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import { ref, watch, onBeforeUnmount } from 'vue';
+import AnimatedNumberCount from '@/components/utils/AnimatedNumberCount.vue';
+
+import { ref, watchEffect } from 'vue';
 
 const props = defineProps<{
   totalDuration: number;
   active: boolean;
+  isFinished: boolean;
 }>();
 
 const seconds = ref(props.totalDuration);
 
 let intervalId: ReturnType<typeof setInterval> | null = null;
 
-const start = () => {
+const startInterval = () => {
   seconds.value = props.totalDuration;
   intervalId && clearInterval(intervalId);
 
@@ -21,16 +24,18 @@ const start = () => {
   }, 1_000);
 };
 
-watch(
-  () => props.active,
-  (isActive) => {
-    if (isActive) start();
-    else intervalId && clearInterval(intervalId);
-  },
-  { immediate: true },
-);
+const stopInterval = () => {
+  intervalId && clearInterval(intervalId);
+};
 
-onBeforeUnmount(() => intervalId && clearInterval(intervalId));
+watchEffect((onCleanup) => {
+  if (props.active) {
+    startInterval();
+    onCleanup(stopInterval);
+  } else {
+    seconds.value = props.totalDuration;
+  }
+});
 </script>
 
 <template>
@@ -41,7 +46,13 @@ onBeforeUnmount(() => intervalId && clearInterval(intervalId));
       :style="{ '--duration': `${props.totalDuration}s` }"
     />
     <div class="absolute inset-2 flex items-center justify-center rounded-full bg-amber-50">
-      <div class="z-10 text-7xl font-bold">{{ seconds }}</div>
+      <div class="z-10 text-7xl font-bold">
+        <AnimatedNumberCount
+          :duration="active || isFinished ? 0 : 300"
+          :value="seconds"
+          :decimals="0"
+        />
+      </div>
     </div>
   </div>
 </template>

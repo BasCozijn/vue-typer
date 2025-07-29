@@ -16,6 +16,8 @@ const statsInterval = ref<ReturnType<typeof setInterval> | null>(null);
 
 function startInterval() {
   statsInterval.value = setInterval(() => {
+    if (!round.value) return;
+
     const timer = Math.max(Date.now() - (round.value.startedAt ?? 0), 1) / 1_000;
 
     cpm.value = Math.round((60 / timer) * round.value.typedChars);
@@ -28,12 +30,15 @@ function stopInterval() {
 }
 
 watchEffect((onCleanup) => {
-  if (round.value.active && !isFinished.value) {
-    startInterval();
-    onCleanup(stopInterval);
-  } else {
-    stopInterval();
-  }
+  if (!isFinished.value) {
+    if (round.value?.active) {
+      startInterval();
+      onCleanup(stopInterval);
+    } else {
+      cpm.value = 0;
+      wpm.value = 0;
+    }
+  } else stopInterval();
 });
 </script>
 
@@ -41,6 +46,7 @@ watchEffect((onCleanup) => {
   <div>
     <RoundStatsTable
       :rows="[
+        { label: 'Chars', value: round?.typedChars ?? 0 },
         { label: 'CPM', value: cpm },
         { label: 'WPM', value: wpm },
       ]"

@@ -6,6 +6,8 @@ import RoundWordsItem from './RoundWordsItem.vue';
 const props = defineProps<{
   words: string[];
   typedWords: string[];
+  isFinished: boolean;
+  isActive: boolean;
 }>();
 
 const moveX = ref<number>(0);
@@ -23,15 +25,23 @@ watch(
     }
   },
 );
+
+watch(
+  () => props.isFinished,
+  (finished) => {
+    if (!finished) moveX.value = 0;
+  },
+);
 </script>
 
 <template>
   <div
-    class="no-scrollbar relative h-16 w-full overflow-x-hidden mask-radial-[100%_100%] mask-radial-from-75% mask-radial-at-left"
+    class="no-scrollbar relative h-12 w-full overflow-x-hidden mask-radial-[100%_100%] mask-radial-from-75% mask-radial-at-left sm:h-16"
   >
     <div
       :style="{ '--move-words-x': `${moveX}px` }"
-      class="ease absolute left-1/2 flex translate-x-(--move-words-x) transition-all duration-100"
+      class="ease absolute left-4 flex translate-x-(--move-words-x) transition-transform duration-100 sm:left-[calc(50%-100px)]"
+      :class="{ 'duration-300': isFinished || !isActive }"
     >
       <ul class="flex">
         <li
