@@ -35,7 +35,7 @@ const tweenGroup = new Group();
 
 let animationFrameId: number | null = null;
 
-const tween = (startValue, endValue) => {
+const tween = (startValue: number, endValue: number) => {
   if (startValue === endValue - 1) {
     AnimatedNumberCount.value = endValue.toFixed(props.decimals);
     return;
@@ -53,7 +53,7 @@ const tween = (startValue, endValue) => {
   tweenInstance.start();
 };
 
-const animate = (time) => {
+const animate = (time: number) => {
   tweenGroup.update(time);
   animationFrameId = requestAnimationFrame(animate);
 };
@@ -69,7 +69,7 @@ watch(
 
 onMounted(() => {
   if (!props.initialCountingDisabled) {
-    setTimeout(() => tween(AnimatedNumberCount.value, props.value), props.startTimeout);
+    setTimeout(() => tween(Number(AnimatedNumberCount.value), props.value), props.startTimeout);
   }
 
   animationFrameId = requestAnimationFrame(animate);

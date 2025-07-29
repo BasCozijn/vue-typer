@@ -1,31 +1,25 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
+
 import validateKeyInput from '@/utils/validateKeyInput';
 import { useFetchWords } from '@/composables/useFetchWords';
 
-const defaultRound = {
+const DURATIONS_LIST = [10, 15, 20, 30, 40, 60, 90, 120];
+
+const defaultRound = ref({
   words: [],
   active: false,
   typedText: '',
   typedChars: 0,
   timer: 0,
-  roundDuration: 10,
+  roundDuration: DURATIONS_LIST[0],
   startedAt: null as number | null,
-};
+});
 
 export const useRoundStore = defineStore('round', () => {
-  const round = ref({ ...defaultRound });
+  const round = ref({ ...defaultRound.value });
 
   let intervalId: ReturnType<typeof setInterval> | null = null;
-
-  function startTimer() {
-    if (intervalId) return;
-    intervalId = setInterval(() => {
-      if (++round.value.timer >= round.value.roundDuration) {
-        clearTimer();
-      }
-    }, 1_000);
-  }
 
   function clearTimer() {
     if (intervalId) clearInterval(intervalId);
@@ -37,19 +31,38 @@ export const useRoundStore = defineStore('round', () => {
 
   const isFinished = computed(() => round.value.timer >= round.value.roundDuration);
 
+  const roundDurationIsLowest = computed(() => round.value.roundDuration === DURATIONS_LIST[0]);
+  const roundDurationIsHighest = computed(
+    () => round.value.roundDuration === DURATIONS_LIST[DURATIONS_LIST.length - 1],
+  );
+
   async function reset() {
     clearTimer();
-    round.value = { ...defaultRound };
-
-    const newWords = await useFetchWords();
-    round.value.words = newWords;
+    round.value = { ...defaultRound.value };
+    round.value.words = await useFetchWords();
   }
 
   function startRound() {
     if (round.value.active) return;
     round.value.active = true;
     round.value.startedAt = Date.now();
-    startTimer();
+
+    if (intervalId) return;
+    intervalId = setInterval(() => {
+      if (++round.value.timer >= round.value.roundDuration) clearTimer();
+    }, 1_000);
+  }
+
+  function increaseRoundDuration() {
+    if (roundDurationIsHighest.value) return;
+    const newDuration = DURATIONS_LIST[DURATIONS_LIST.indexOf(round.value.roundDuration) + 1];
+    round.value.roundDuration = defaultRound.value.roundDuration = newDuration;
+  }
+
+  function decreaseRoundDuration() {
+    if (roundDurationIsLowest.value) return;
+    const newDuration = DURATIONS_LIST[DURATIONS_LIST.indexOf(round.value.roundDuration) - 1];
+    round.value.roundDuration = defaultRound.value.roundDuration = newDuration;
   }
 
   function insertKey(key: string) {
@@ -71,9 +84,13 @@ export const useRoundStore = defineStore('round', () => {
     typedWords,
     currentTypedWord,
     isFinished,
+    roundDurationIsLowest,
+    roundDurationIsHighest,
 
     reset,
     startRound,
     insertKey,
+    increaseRoundDuration,
+    decreaseRoundDuration,
   };
 });

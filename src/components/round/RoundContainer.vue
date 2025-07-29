@@ -6,13 +6,22 @@ import RoundCountdown from '@/components/round/RoundCountdown.vue';
 import RoundWordsInput from '@/components/round/words/RoundWordsInput.vue';
 import RoundWords from '@/components/round/words/RoundWords.vue';
 import RoundRetryButton from '@/components/round/RoundRetryButton.vue';
+import IconMin from '@/components/icons/IconMin.vue';
+import IconPlus from '@/components/icons/IconPlus.vue';
 
 import RoundStatsContainer from '@/components/round/stats/RoundStatsContainer.vue';
 
 import { useRoundStore } from '@/stores/roundStore';
 
 const roundStore = useRoundStore();
-const { round, currentTypedWord, isFinished, typedWords } = storeToRefs(roundStore);
+const {
+  round,
+  currentTypedWord,
+  isFinished,
+  typedWords,
+  roundDurationIsLowest,
+  roundDurationIsHighest,
+} = storeToRefs(roundStore);
 
 const words = computed(() => round.value?.words ?? []);
 const roundDuration = computed(() => round.value?.roundDuration);
@@ -28,12 +37,29 @@ onMounted(() => {
 <template>
   <div class="relative flex h-full flex-col justify-center overflow-hidden">
     <div class="absolute top-10 left-1/2 flex -translate-x-1/2 flex-col items-center gap-4">
-      <RoundCountdown
-        v-if="roundDuration"
-        :totalDuration="roundDuration"
-        :active="isActive"
-        :isFinished="isFinished"
-      ></RoundCountdown>
+      <div class="relative flex items-center">
+        <button
+          v-if="!roundDurationIsLowest && !isActive"
+          class="absolute right-full cursor-pointer"
+          @click="roundStore.decreaseRoundDuration"
+        >
+          <IconMin class="size-8 sm:size-10" />
+        </button>
+        <RoundCountdown
+          v-if="roundDuration"
+          :totalDuration="roundDuration"
+          :active="isActive"
+          :isFinished="isFinished"
+        ></RoundCountdown>
+        <button
+          v-if="!roundDurationIsHighest && !isActive"
+          class="absolute left-full cursor-pointer"
+          @click="roundStore.increaseRoundDuration"
+        >
+          <IconPlus class="size-8 sm:size-10" />
+        </button>
+      </div>
+
       <RoundRetryButton
         v-if="isFinished"
         @click="roundStore.reset"

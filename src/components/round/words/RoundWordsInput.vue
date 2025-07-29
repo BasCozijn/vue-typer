@@ -10,7 +10,7 @@ const onKeydown = (e: KeyboardEvent) => {
 };
 
 const props = defineProps<{
-  word: string;
+  word: string | undefined;
   typedWord: string;
   disabled: boolean;
 }>();
