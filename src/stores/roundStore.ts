@@ -14,6 +14,7 @@ const defaultRound = ref({
   timer: 0,
   roundDuration: DURATIONS_LIST[0],
   startedAt: null as number | null,
+  errors: 0,
 });
 
 export const useRoundStore = defineStore('round', () => {

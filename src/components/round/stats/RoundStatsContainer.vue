@@ -47,8 +47,10 @@ watchEffect((onCleanup) => {
     <RoundStatsTable
       :rows="[
         { label: 'Chars', value: round?.typedChars ?? 0 },
+        // { label: 'Errors', value: round?.errors ?? 0 },
         { label: 'CPM', value: cpm },
         { label: 'WPM', value: wpm },
+        { label: 'Duration (s)', value: round?.roundDuration ?? 0 },
       ]"
     ></RoundStatsTable>
   </div>

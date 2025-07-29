@@ -43,20 +43,35 @@ watch(
       class="ease absolute left-4 flex translate-x-(--move-words-x) transition-transform duration-100 sm:left-[calc(50%-100px)]"
       :class="{ 'duration-300': isFinished || !isActive }"
     >
-      <ul class="flex">
-        <li
-          v-for="(word, index) in words"
-          ref="wordsRef"
-          :key="`word-${index}`"
+      <Transition>
+        <ul
+          v-if="words.length"
+          class="flex"
         >
-          <RoundWordsItem
-            :word="word"
-            :typedWord="typedWords[index]"
-          />
-        </li>
-      </ul>
+          <li
+            v-for="(word, index) in words"
+            ref="wordsRef"
+            :key="`word-${index}`"
+          >
+            <RoundWordsItem
+              :word="word"
+              :typedWord="typedWords[index]"
+            />
+          </li>
+        </ul>
+      </Transition>
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+</style>

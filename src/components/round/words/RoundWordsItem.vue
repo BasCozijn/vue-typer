@@ -16,7 +16,7 @@ const isCorrect = computed(() => {
     <span
       v-for="char in word"
       :key="char"
-      class="text-gray-900 transition-colors duration-100"
+      class="text-gray-800 transition-colors duration-200"
       :class="{ 'text-green-500': isCorrect }"
       >{{ char }}</span
     >&nbsp;

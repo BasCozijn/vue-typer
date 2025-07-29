@@ -3,7 +3,7 @@ import RoundContainer from '@/components/round/RoundContainer.vue';
 </script>
 
 <template>
-  <main class="h-screen w-screen bg-amber-50">
+  <main class="h-screen w-screen bg-amber-50 text-gray-800">
     <RoundContainer></RoundContainer>
   </main>
 </template>
