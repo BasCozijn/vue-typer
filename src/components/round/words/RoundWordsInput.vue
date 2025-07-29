@@ -21,8 +21,15 @@ const typedWordIsCorrect = computed(() => {
 </script>
 
 <template>
-  <div>
+  <div class="relative">
+    <label
+      aria-hidden="true"
+      for="typed-word"
+      class="absolute top-0 right-full h-full w-full cursor-text"
+    >
+    </label>
     <input
+      id="typed-word"
       name="typed-word"
       class="border-none p-0 text-4xl outline-none focus:placeholder:text-transparent sm:text-6xl"
       :class="{
@@ -33,6 +40,7 @@ const typedWordIsCorrect = computed(() => {
       placeholder="Start hier"
       autocomplete="off"
       autofocus
+      autocorrect="off"
       autocapitalize="off"
       tabindex="0"
       @keydown.prevent="onKeydown"
